@@ -15,6 +15,9 @@ def spotify_login(request):
     """
     Initiates the Spotify OAuth flow by redirecting to Spotify's authorization page.
     """
+    # Clear any existing session data to start fresh
+    request.session.flush()
+    
     # Generate a random state for CSRF protection
     state = secrets.token_urlsafe(16)
     request.session['oauth_state'] = state

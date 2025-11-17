@@ -18,6 +18,9 @@ def save_tokens(access_token, refresh_token, token_type='Bearer', expires_in=360
         'expires_in': expires_in
     }
     
+    # Ensure the directory exists
+    TOKEN_FILE.parent.mkdir(parents=True, exist_ok=True)
+    
     with open(TOKEN_FILE, 'w') as f:
         json.dump(tokens, f)
 
