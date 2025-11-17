@@ -153,3 +153,23 @@ def auth_status(request):
             'authenticated': False,
             'message': 'Failed to verify token'
         }, status=500)
+
+
+def logout(request):
+    """
+    Clear session and token storage.
+    """
+    # Clear session
+    request.session.flush()
+    
+    # Clear global token storage
+    import os
+    from api import token_manager
+    token_file = token_manager.TOKEN_FILE
+    if token_file.exists():
+        os.remove(token_file)
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Logged out successfully. Session and tokens cleared.'
+    })
