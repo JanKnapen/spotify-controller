@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  django:
+    build: ./django
+    container_name: spotify_django
+    volumes:
+      - ./django:/app
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - spotify_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: spotify_nginx
+    ports:
+      - "80:80"  # Public OAuth endpoint
+      - "${INTERNAL_API_PORT:-8001}:8001"  # Internal API for VMs
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/public.conf:/etc/nginx/conf.d/public.conf:ro
+      - ./nginx/internal.conf:/etc/nginx/conf.d/internal.conf:ro
+    depends_on:
+      - django
+    networks:
+      - spotify_network
+    restart: unless-stopped
+
+networks:
+  spotify_network:
+    driver: bridge
