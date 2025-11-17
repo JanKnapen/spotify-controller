@@ -8,6 +8,7 @@ from django.conf import settings
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from urllib.parse import urlencode
+from api import token_manager
 
 
 def spotify_login(request):
@@ -81,11 +82,19 @@ def spotify_callback(request):
         
         token_data = response.json()
         
-        # Store tokens in session
+        # Store tokens in session (for browser)
         request.session['access_token'] = token_data.get('access_token')
         request.session['refresh_token'] = token_data.get('refresh_token')
         request.session['token_type'] = token_data.get('token_type')
         request.session['expires_in'] = token_data.get('expires_in')
+        
+        # ALSO store tokens globally for API access from VMs
+        token_manager.save_tokens(
+            access_token=token_data.get('access_token'),
+            refresh_token=token_data.get('refresh_token'),
+            token_type=token_data.get('token_type'),
+            expires_in=token_data.get('expires_in')
+        )
         
         return JsonResponse({
             'success': True,

@@ -6,6 +6,7 @@ services:
     container_name: spotify_django
     volumes:
       - ./django:/app
+      - spotify_tokens:/app/tokens  # Persist tokens across restarts
     env_file:
       - .env
     environment:
@@ -33,3 +34,6 @@ services:
 networks:
   spotify_network:
     driver: bridge
+
+volumes:
+  spotify_tokens:  # Named volume to persist tokens
