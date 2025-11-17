@@ -103,10 +103,19 @@ SPOTIFY_REDIRECT_URI = os.environ.get('SPOTIFY_REDIRECT_URI')
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'  # Allow cookies on redirects from Spotify
+SESSION_COOKIE_NAME = 'spotify_sessionid'
 
 # Security settings for production
 if not DEBUG:
-    CSRF_COOKIE_SECURE = True  # Only send CSRF cookie over HTTPS
-    SESSION_COOKIE_SECURE = True  # Only send session cookie over HTTPS
+    # For Cloudflare Tunnel: Cloudflare handles HTTPS, Django sees HTTP
+    # So we need to trust the proxy headers
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Don't require secure cookies since Django sees HTTP from Cloudflare
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SECURE = False
+    
     SECURE_SSL_REDIRECT = False  # Cloudflare handles SSL, don't redirect in Django
     CSRF_TRUSTED_ORIGINS = ['https://spotify-controller.janne.men']
