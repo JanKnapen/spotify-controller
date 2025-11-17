@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-TOKEN_FILE = Path('/app/tokens.json')
+TOKEN_FILE = Path('/app/tokens/tokens.json')
 
 
 def save_tokens(access_token, refresh_token, token_type='Bearer', expires_in=3600):
