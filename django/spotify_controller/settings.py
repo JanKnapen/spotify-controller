@@ -14,7 +14,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-ch
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# For internal network access, allow all hosts
+# This is safe since port 8001 is only accessible internally
+# and nginx handles external requests on port 80
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 INSTALLED_APPS = [
